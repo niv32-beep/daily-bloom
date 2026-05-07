@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { Sparkles, RefreshCw, Trash2 } from "lucide-react";
 import { PageShell } from "@/components/page-shell";
-import { PlannerCard } from "@/components/planner/planner-card";
+import { SoftCard } from "@/components/soft-card";
 import { Button } from "@/components/ui/button";
 import { ScheduleTimeline } from "@/components/planner/schedule-timeline";
 import { useTasks } from "@/lib/use-tasks";
