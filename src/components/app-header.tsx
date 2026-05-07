@@ -2,13 +2,19 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Bell, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 
 export function AppHeader() {
-  const today = new Date().toLocaleDateString(undefined, {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-  });
+  const [today, setToday] = useState("");
+  useEffect(() => {
+    setToday(
+      new Date().toLocaleDateString(undefined, {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+      }),
+    );
+  }, []);
 
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-3 border-b border-border/60 bg-background/80 px-4 backdrop-blur-md md:px-8">
