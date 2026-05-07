@@ -111,10 +111,10 @@ export function TaskBreakdownCard() {
                 </span>
                 <span className="flex-1">{s}</span>
                 <button
-                  onClick={() =>
-                    addTask({ title: s, priority: "medium", category: "personal" }) ||
-                    toast.success("Added")
-                  }
+                  onClick={() => {
+                    addTask({ title: s, priority: "medium", category: "personal" });
+                    toast.success("Added");
+                  }}
                   className="text-xs text-muted-foreground transition hover:text-primary"
                   aria-label="Add this subtask"
                 >
