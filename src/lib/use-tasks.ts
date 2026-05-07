@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useLocalStorage } from "./storage";
+import { useLearning } from "./use-learning";
 import type { Task, Subtask } from "./task-types";
 
 const KEY = "lumen.tasks.v2";
@@ -18,6 +19,7 @@ const seed: Task[] = [
 
 export function useTasks() {
   const [tasks, setTasks] = useLocalStorage<Task[]>(KEY, seed);
+  const { recordCompletion } = useLearning();
 
   const addTask = useCallback(
     (task: Omit<Task, "id" | "createdAt" | "done" | "subtasks"> & { subtasks?: Subtask[] }) => {
@@ -47,8 +49,15 @@ export function useTasks() {
 
   const toggleTask = useCallback(
     (id: string) =>
-      setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t))),
-    [setTasks],
+      setTasks((prev) =>
+        prev.map((t) => {
+          if (t.id !== id) return t;
+          const nextDone = !t.done;
+          if (nextDone) recordCompletion();
+          return { ...t, done: nextDone };
+        }),
+      ),
+    [setTasks, recordCompletion],
   );
 
   const toggleSubtask = useCallback(
