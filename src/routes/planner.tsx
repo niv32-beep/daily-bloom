@@ -8,6 +8,7 @@ import { ScheduleTimeline } from "@/components/planner/schedule-timeline";
 import { useTasks } from "@/lib/use-tasks";
 import { useCheckIns, MOOD_OPTIONS, ENERGY_OPTIONS } from "@/lib/use-checkins";
 import { useSchedule, buildConfig, generatePlan } from "@/lib/use-schedule";
+import { useLearning } from "@/lib/use-learning";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/planner")({
@@ -20,9 +21,15 @@ function Planner() {
   const { today } = useCheckIns();
   const { blocks, setPlan, move, remove, clear, totalMin } = useSchedule();
 
+  const { insights } = useLearning();
   const mood = today?.mood ?? "calm";
   const energy = today?.energy ?? 3;
-  const cfg = useMemo(() => buildConfig(mood, energy), [mood, energy]);
+  const cfg = useMemo(() => {
+    const base = buildConfig(mood, energy);
+    return insights.preferredHour !== null
+      ? { ...base, startHour: insights.preferredHour }
+      : base;
+  }, [mood, energy, insights.preferredHour]);
 
   const moodLabel = MOOD_OPTIONS.find((m) => m.value === mood)?.label ?? "Calm";
   const energyLabel = ENERGY_OPTIONS.find((e) => e.value === energy)?.label ?? "Medium";

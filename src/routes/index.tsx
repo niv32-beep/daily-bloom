@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { Sparkles, ListChecks, NotebookPen, CalendarDays } from "lucide-react";
 import { CheckInCard } from "@/components/planner/check-in-card";
 import { MoodSummaryCard } from "@/components/planner/mood-summary-card";
+import { InsightsCard } from "@/components/planner/insights-card";
 import { useTasks } from "@/lib/use-tasks";
 
 export const Route = createFileRoute("/")({
@@ -34,6 +35,8 @@ function Dashboard() {
         <CheckInCard />
         <MoodSummaryCard />
       </div>
+
+      <InsightsCard />
 
       <div className="grid gap-6 md:grid-cols-3">
         <PlannerCard className="space-y-3">
