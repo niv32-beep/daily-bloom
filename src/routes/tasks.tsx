@@ -4,6 +4,7 @@ import { PageShell } from "@/components/page-shell";
 import { PlannerCard } from "@/components/planner/planner-card";
 import { TaskCard } from "@/components/planner/task-card";
 import { TaskDialog } from "@/components/planner/task-dialog";
+import { TaskBreakdownCard } from "@/components/planner/task-breakdown-card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -52,6 +53,7 @@ function TasksPage() {
         </Button>
       }
     >
+      <TaskBreakdownCard />
       <PlannerCard padded={false} className="p-4">
         <div className="flex flex-wrap items-center gap-3">
           <Tabs value={filter} onValueChange={(v) => setFilter(v as Filter)}>
