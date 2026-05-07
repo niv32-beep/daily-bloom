@@ -9,6 +9,7 @@ export interface LearningStats {
   staleCounts: Record<string, number>;
   totalCompleted: number;
   lastUpdated: string;
+  lastStaleScan: string; // YYYY-MM-DD
 }
 
 const KEY = "lumen.learning.v1";
@@ -18,6 +19,7 @@ const initial: LearningStats = {
   staleCounts: {},
   totalCompleted: 0,
   lastUpdated: new Date(0).toISOString(),
+  lastStaleScan: "",
 };
 
 export function normalizeTitle(t: string): string {
@@ -43,13 +45,20 @@ export function useLearning() {
     (titles: string[]) => {
       if (titles.length === 0) return;
       setStats((s) => {
+        const today = new Date().toISOString().slice(0, 10);
+        if (s.lastStaleScan === today) return s;
         const next = { ...s.staleCounts };
         for (const t of titles) {
           const k = normalizeTitle(t);
           if (!k) continue;
           next[k] = (next[k] ?? 0) + 1;
         }
-        return { ...s, staleCounts: next, lastUpdated: new Date().toISOString() };
+        return {
+          ...s,
+          staleCounts: next,
+          lastStaleScan: today,
+          lastUpdated: new Date().toISOString(),
+        };
       });
     },
     [setStats],
