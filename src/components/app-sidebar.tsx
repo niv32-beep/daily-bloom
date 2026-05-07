@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { LayoutDashboard, CalendarDays, NotebookPen, ListChecks, Settings, Sparkles } from "lucide-react";
 import {
