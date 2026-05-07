@@ -21,7 +21,10 @@ const items = [
 ] as const;
 
 export function AppSidebar() {
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const routerPath = useRouterState({ select: (s) => s.location.pathname });
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const pathname = mounted ? routerPath : "";
 
   return (
     <Sidebar collapsible="icon">
