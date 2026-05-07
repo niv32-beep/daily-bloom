@@ -53,6 +53,7 @@ function TasksPage() {
         </Button>
       }
     >
+      <TaskBreakdownCard />
       <PlannerCard padded={false} className="p-4">
         <div className="flex flex-wrap items-center gap-3">
           <Tabs value={filter} onValueChange={(v) => setFilter(v as Filter)}>
