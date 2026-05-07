@@ -65,7 +65,7 @@ function Planner() {
       }
     >
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-        <PlannerCard
+        <SoftCard
           title="Your day"
           subtitle={
             blocks.length > 0
@@ -74,10 +74,10 @@ function Planner() {
           }
         >
           <ScheduleTimeline blocks={blocks} onMove={move} onRemove={remove} />
-        </PlannerCard>
+        </SoftCard>
 
         <div className="space-y-6">
-          <PlannerCard title="Today's tone" subtitle="Adapts to your check-in">
+          <SoftCard title="Today's tone" subtitle="Adapts to your check-in">
             <dl className="space-y-3 text-sm">
               <Row label="Mood" value={moodLabel} />
               <Row label="Energy" value={energyLabel} />
@@ -88,9 +88,9 @@ function Planner() {
             <p className="mt-4 rounded-2xl bg-secondary/60 p-3 text-xs leading-relaxed text-muted-foreground">
               {hint(mood, energy)}
             </p>
-          </PlannerCard>
+          </SoftCard>
 
-          <PlannerCard title="Open tasks" subtitle={`${tasks.filter((t) => !t.done).length} ready`}>
+          <SoftCard title="Open tasks" subtitle={`${tasks.filter((t) => !t.done).length} ready`}>
             <ul className="space-y-2 text-sm">
               {tasks
                 .filter((t) => !t.done)
@@ -110,7 +110,7 @@ function Planner() {
                 <li className="text-muted-foreground">All clear ✨</li>
               )}
             </ul>
-          </PlannerCard>
+          </SoftCard>
         </div>
       </div>
     </PageShell>
