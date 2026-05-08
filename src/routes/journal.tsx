@@ -3,6 +3,7 @@ import { useState } from "react";
 import { PageShell } from "@/components/page-shell";
 import { PlannerCard, PlannerCardTitle, PlannerCardSubtitle } from "@/components/planner/planner-card";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/empty-state";
 import { MoodSelector, DEFAULT_MOODS } from "@/components/planner/mood-selector";
 import { ClientDate } from "@/components/client-date";
 import { Sparkles, Trash2, NotebookPen } from "lucide-react";
@@ -60,12 +61,14 @@ function JournalPage() {
           </div>
         </div>
 
+        <label htmlFor="journal-text" className="sr-only">Journal entry</label>
         <textarea
+          id="journal-text"
           value={text}
           onChange={(e) => setText(e.target.value)}
           rows={10}
           placeholder="Let it all out. One thought per line works nicely if you want to convert into tasks…"
-          className="w-full resize-none rounded-2xl border border-border/60 bg-background/60 px-5 py-4 text-base leading-relaxed text-foreground placeholder:text-muted-foreground outline-none transition focus:ring-2 focus:ring-ring"
+          className="w-full resize-none rounded-2xl border border-border/60 bg-background/60 px-5 py-4 text-base leading-relaxed text-foreground placeholder:text-muted-foreground outline-none transition focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring"
         />
 
         <div className="space-y-3">
@@ -86,9 +89,11 @@ function JournalPage() {
       <div className="space-y-4">
         <h2 className="text-lg font-semibold text-foreground">Past entries</h2>
         {entries.length === 0 ? (
-          <PlannerCard className="text-center text-muted-foreground">
-            Your first thought is welcome here. 🌙
-          </PlannerCard>
+          <EmptyState
+            icon={<NotebookPen className="h-5 w-5" />}
+            title="Your first thought is welcome here"
+            description="Anything goes — a worry, a wish, a small win."
+          />
         ) : (
           entries.map((e) => {
             const moodOpt = DEFAULT_MOODS.find((m) => m.value === e.mood);

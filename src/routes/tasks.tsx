@@ -5,8 +5,9 @@ import { PlannerCard } from "@/components/planner/planner-card";
 import { TaskCard } from "@/components/planner/task-card";
 import { TaskDialog } from "@/components/planner/task-dialog";
 import { TaskBreakdownCard } from "@/components/planner/task-breakdown-card";
+import { EmptyState } from "@/components/empty-state";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, ListChecks } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTasks } from "@/lib/use-tasks";
 import { CATEGORY_OPTIONS, type Task, type TaskCategory } from "@/lib/task-types";
@@ -89,9 +90,16 @@ function TasksPage() {
 
       <div className="space-y-3">
         {visible.length === 0 ? (
-          <PlannerCard className="text-center text-muted-foreground">
-            Nothing here yet. Add a small task to begin. 💜
-          </PlannerCard>
+          <EmptyState
+            icon={<ListChecks className="h-5 w-5" />}
+            title="Nothing here yet"
+            description="Add a small task to begin. Small steps add up. 💜"
+            action={
+              <Button onClick={openNew} className="mt-2">
+                <Plus className="mr-2 h-4 w-4" /> New task
+              </Button>
+            }
+          />
         ) : (
           visible.map((task) => (
             <TaskCard
@@ -131,10 +139,11 @@ function CategoryChip({
   return (
     <button
       onClick={onClick}
+      aria-pressed={active}
       className={
-        "rounded-full px-3 py-1.5 text-xs font-medium transition-colors " +
+        "rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background " +
         (active
-          ? "bg-primary text-primary-foreground"
+          ? "bg-primary text-primary-foreground shadow-[var(--shadow-soft)]"
           : "bg-accent/40 text-foreground hover:bg-accent")
       }
     >
