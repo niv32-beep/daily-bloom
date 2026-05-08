@@ -1,5 +1,6 @@
 import { PlannerCard, PlannerCardTitle, PlannerCardSubtitle } from "./planner-card";
 import { Sparkles } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   useCheckIns,
   MOOD_OPTIONS,
@@ -8,7 +9,20 @@ import {
 import { ClientDate } from "@/components/client-date";
 
 export function MoodSummaryCard() {
-  const { recent } = useCheckIns();
+  const { recent, hydrated } = useCheckIns();
+
+  if (!hydrated) {
+    return (
+      <PlannerCard className="space-y-4">
+        <Skeleton className="h-6 w-32" />
+        <Skeleton className="h-4 w-48" />
+        <div className="grid grid-cols-2 gap-3">
+          <Skeleton className="h-20 rounded-2xl" />
+          <Skeleton className="h-20 rounded-2xl" />
+        </div>
+      </PlannerCard>
+    );
+  }
 
   if (recent.length === 0) {
     return (
