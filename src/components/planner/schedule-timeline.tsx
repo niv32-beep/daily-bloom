@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { CalendarDays } from "lucide-react";
 import { TimelineBlock } from "./timeline-block";
+import { EmptyState } from "@/components/empty-state";
 import type { ScheduleBlock } from "@/lib/use-schedule";
 
 export interface ScheduleTimelineProps {
