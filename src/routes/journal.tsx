@@ -88,9 +88,11 @@ function JournalPage() {
       <div className="space-y-4">
         <h2 className="text-lg font-semibold text-foreground">Past entries</h2>
         {entries.length === 0 ? (
-          <PlannerCard className="text-center text-muted-foreground">
-            Your first thought is welcome here. 🌙
-          </PlannerCard>
+          <EmptyState
+            icon={<NotebookPen className="h-5 w-5" />}
+            title="Your first thought is welcome here"
+            description="Anything goes — a worry, a wish, a small win."
+          />
         ) : (
           entries.map((e) => {
             const moodOpt = DEFAULT_MOODS.find((m) => m.value === e.mood);
