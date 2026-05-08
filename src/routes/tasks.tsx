@@ -139,10 +139,11 @@ function CategoryChip({
   return (
     <button
       onClick={onClick}
+      aria-pressed={active}
       className={
-        "rounded-full px-3 py-1.5 text-xs font-medium transition-colors " +
+        "rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background " +
         (active
-          ? "bg-primary text-primary-foreground"
+          ? "bg-primary text-primary-foreground shadow-[var(--shadow-soft)]"
           : "bg-accent/40 text-foreground hover:bg-accent")
       }
     >
