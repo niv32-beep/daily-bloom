@@ -46,7 +46,7 @@ function dayKey(iso: string) {
 }
 
 export function useCheckIns() {
-  const [entries, setEntries] = useLocalStorage<CheckIn[]>(KEY, []);
+  const [entries, setEntries, hydrated] = useLocalStorage<CheckIn[]>(KEY, []);
 
   const today = useMemo(() => {
     const k = dayKey(new Date().toISOString());
@@ -67,5 +67,6 @@ export function useCheckIns() {
 
   const recent = useMemo(() => entries.slice(0, 7), [entries]);
 
-  return { entries, today, recent, saveCheckIn };
+  return { entries, today, recent, saveCheckIn, hydrated };
 }
+
