@@ -90,9 +90,16 @@ function TasksPage() {
 
       <div className="space-y-3">
         {visible.length === 0 ? (
-          <PlannerCard className="text-center text-muted-foreground">
-            Nothing here yet. Add a small task to begin. 💜
-          </PlannerCard>
+          <EmptyState
+            icon={<ListChecks className="h-5 w-5" />}
+            title="Nothing here yet"
+            description="Add a small task to begin. Small steps add up. 💜"
+            action={
+              <Button onClick={openNew} className="mt-2">
+                <Plus className="mr-2 h-4 w-4" /> New task
+              </Button>
+            }
+          />
         ) : (
           visible.map((task) => (
             <TaskCard
