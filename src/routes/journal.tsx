@@ -3,6 +3,7 @@ import { useState } from "react";
 import { PageShell } from "@/components/page-shell";
 import { PlannerCard, PlannerCardTitle, PlannerCardSubtitle } from "@/components/planner/planner-card";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/empty-state";
 import { MoodSelector, DEFAULT_MOODS } from "@/components/planner/mood-selector";
 import { ClientDate } from "@/components/client-date";
 import { Sparkles, Trash2, NotebookPen } from "lucide-react";
