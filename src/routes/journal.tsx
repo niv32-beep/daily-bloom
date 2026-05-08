@@ -60,12 +60,14 @@ function JournalPage() {
           </div>
         </div>
 
+        <label htmlFor="journal-text" className="sr-only">Journal entry</label>
         <textarea
+          id="journal-text"
           value={text}
           onChange={(e) => setText(e.target.value)}
           rows={10}
           placeholder="Let it all out. One thought per line works nicely if you want to convert into tasks…"
-          className="w-full resize-none rounded-2xl border border-border/60 bg-background/60 px-5 py-4 text-base leading-relaxed text-foreground placeholder:text-muted-foreground outline-none transition focus:ring-2 focus:ring-ring"
+          className="w-full resize-none rounded-2xl border border-border/60 bg-background/60 px-5 py-4 text-base leading-relaxed text-foreground placeholder:text-muted-foreground outline-none transition focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring"
         />
 
         <div className="space-y-3">
