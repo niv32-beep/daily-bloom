@@ -15,12 +15,11 @@ export function ScheduleTimeline({ blocks, onMove, onRemove }: ScheduleTimelineP
 
   if (blocks.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-border/70 bg-background/40 p-10 text-center">
-        <p className="text-base text-muted-foreground">
-          No plan yet. Tap <span className="font-medium text-foreground">Generate plan</span> to
-          shape your day.
-        </p>
-      </div>
+      <EmptyState
+        icon={<CalendarDays className="h-5 w-5" />}
+        title="No plan yet"
+        description="Tap Generate plan to shape a calm, adaptive day."
+      />
     );
   }
 
