@@ -1,12 +1,21 @@
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Bell, Search } from "lucide-react";
+import { Bell, LogOut, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { useAuth } from "@/hooks/auth/use-auth";
+import { useNavigate } from "@tanstack/react-router";
 
 export function AppHeader() {
+  const { signOut, user } = useAuth();
+  const navigate = useNavigate();
   const [today, setToday] = useState("");
+  const handleSignOut = async () => {
+    await signOut();
+    navigate({ to: "/login" });
+  };
+  void user;
   useEffect(() => {
     setToday(
       new Date().toLocaleDateString(undefined, {
@@ -36,6 +45,15 @@ export function AppHeader() {
         <ThemeToggle />
         <Button variant="ghost" size="icon" className="rounded-2xl" aria-label="Notifications">
           <Bell className="h-5 w-5" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-2xl"
+          aria-label="Sign out"
+          onClick={handleSignOut}
+        >
+          <LogOut className="h-5 w-5" />
         </Button>
       </div>
     </header>

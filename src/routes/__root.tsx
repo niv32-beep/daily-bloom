@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -13,6 +14,10 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { AppHeader } from "@/components/app-header";
 import { Toaster } from "@/components/ui/sonner";
+import { AuthProvider } from "@/hooks/auth/use-auth";
+import { AuthGuard } from "@/components/auth/auth-guard";
+
+const AUTH_PATHS = ["/login", "/signup"];
 
 function NotFoundComponent() {
   return (
@@ -92,18 +97,32 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <SidebarProvider>
-        <div className="flex min-h-screen w-full bg-background">
-          <AppSidebar />
-          <div className="flex min-h-screen flex-1 flex-col">
-            <AppHeader />
-            <main className="flex-1">
-              <Outlet />
-            </main>
-          </div>
-        </div>
+      <AuthProvider>
+        <AuthGuard>
+          <AppShell />
+        </AuthGuard>
         <Toaster />
-      </SidebarProvider>
+      </AuthProvider>
     </QueryClientProvider>
+  );
+}
+
+function AppShell() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  if (AUTH_PATHS.includes(pathname)) {
+    return <Outlet />;
+  }
+  return (
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full bg-background">
+        <AppSidebar />
+        <div className="flex min-h-screen flex-1 flex-col">
+          <AppHeader />
+          <main className="flex-1">
+            <Outlet />
+          </main>
+        </div>
+      </div>
+    </SidebarProvider>
   );
 }
