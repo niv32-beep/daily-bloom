@@ -18,6 +18,10 @@ export interface Task {
   dueDate?: string; // ISO date
   subtasks: Subtask[];
   createdAt: string;
+  // AI scheduler fields (optional — populated by handleGenerateSchedule)
+  duration?: number; // minutes
+  timeSlot?: string; // "HH:MM"
+  alignmentReason?: string;
 }
 
 export const PRIORITY_OPTIONS: { value: TaskPriority; label: string }[] = [

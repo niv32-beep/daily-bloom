@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { Sparkles, RefreshCw, Trash2 } from "lucide-react";
 import { PageShell } from "@/components/page-shell";
 import { SoftCard } from "@/components/soft-card";
@@ -7,8 +8,9 @@ import { Button } from "@/components/ui/button";
 import { ScheduleTimeline } from "@/components/planner/schedule-timeline";
 import { useTasks } from "@/lib/use-tasks";
 import { useCheckIns, MOOD_OPTIONS, ENERGY_OPTIONS } from "@/lib/use-checkins";
-import { useSchedule, buildConfig, generatePlan } from "@/lib/use-schedule";
+import { useSchedule, buildConfig, generatePlan, type ScheduleBlock } from "@/lib/use-schedule";
 import { useLearning } from "@/lib/use-learning";
+import { generateAiSchedule } from "@/lib/ai-schedule.functions";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/planner")({
@@ -17,9 +19,11 @@ export const Route = createFileRoute("/planner")({
 });
 
 function Planner() {
-  const { tasks } = useTasks();
+  const { tasks, updateTask } = useTasks();
   const { today } = useCheckIns();
   const { blocks, setPlan, move, remove, clear, totalMin } = useSchedule();
+  const [loading, setLoading] = useState(false);
+  const aiSchedule = useServerFn(generateAiSchedule);
 
   const { insights } = useLearning();
   const mood = today?.mood ?? "calm";
@@ -34,17 +38,64 @@ function Planner() {
   const moodLabel = MOOD_OPTIONS.find((m) => m.value === mood)?.label ?? "Calm";
   const energyLabel = ENERGY_OPTIONS.find((e) => e.value === energy)?.label ?? "Medium";
 
-  const generate = () => {
+  const handleGenerateSchedule = async () => {
     const open = tasks.filter((t) => !t.done);
     if (open.length === 0) {
       toast("No open tasks", { description: "Add a few tasks, then generate your plan." });
       return;
     }
-    setPlan(generatePlan(tasks, cfg));
-    toast.success("Plan ready", {
-      description: `${cfg.maxTasks} focus blocks · ${cfg.focusMin}m focus / ${cfg.breakMin}m break`,
-    });
+
+    setLoading(true);
+    try {
+      const { schedule, error } = await aiSchedule({
+        data: {
+          mood,
+          energy,
+          tasks: open.map((t) => ({ id: t.id, title: t.title, priority: t.priority })),
+        },
+      });
+
+      if (error || schedule.length === 0) {
+        // Fallback to local generator
+        setPlan(generatePlan(tasks, cfg));
+        toast(error ?? "Using local plan", {
+          description: "AI was unavailable — generated a local schedule.",
+        });
+        return;
+      }
+
+      // Patch tasks with AI fields
+      schedule.forEach((s) => {
+        updateTask(s.id, {
+          duration: s.duration,
+          timeSlot: s.timeSlot,
+          alignmentReason: s.alignmentReason,
+          priority: s.priority,
+        });
+      });
+
+      // Render as timeline blocks (existing UI)
+      const aiBlocks: ScheduleBlock[] = schedule.map((s) => ({
+        id: crypto.randomUUID(),
+        taskId: s.id,
+        title: s.title,
+        kind: "focus" as const,
+        start: s.timeSlot,
+        durationMin: s.duration,
+      }));
+      setPlan(aiBlocks);
+      toast.success("AI plan ready", {
+        description: `${schedule.length} tasks aligned to your ${mood} mood`,
+      });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to generate schedule");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const generate = handleGenerateSchedule;
+
 
   return (
     <PageShell
@@ -57,7 +108,7 @@ function Planner() {
               <Trash2 className="mr-2 h-4 w-4" /> Clear
             </Button>
           )}
-          <Button className="rounded-2xl" onClick={generate}>
+          <Button className="rounded-2xl" onClick={generate} disabled={loading}>
             {blocks.length > 0 ? (
               <>
                 <RefreshCw className="mr-2 h-4 w-4" /> Regenerate
