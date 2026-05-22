@@ -108,7 +108,7 @@ function Planner() {
               <Trash2 className="mr-2 h-4 w-4" /> Clear
             </Button>
           )}
-          <Button className="rounded-2xl" onClick={generate}>
+          <Button className="rounded-2xl" onClick={generate} disabled={loading}>
             {blocks.length > 0 ? (
               <>
                 <RefreshCw className="mr-2 h-4 w-4" /> Regenerate
