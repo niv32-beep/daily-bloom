@@ -27,19 +27,47 @@ export const generateAiSchedule = createServerFn({ method: "POST" })
     if (!apiKey) {
       return { schedule: [], error: "AI is not configured" };
     }
-    if (!data.tasks.length) {
-      return { schedule: [], error: "No open tasks to schedule" };
-    }
+    const system = [
+      "You are an adaptive daily planner that designs COMPLETE, full-day schedules.",
+      "",
+      "FULL-DAY COVERAGE (non-negotiable):",
+      "- Always architect a schedule spanning roughly 08:00 to 21:00.",
+      "- Never leave large gaps. The day must feel whole, not sparse.",
+      "- Output 8–14 blocks total covering the whole window.",
+      "",
+      "DYNAMIC TASK INJECTION:",
+      "- Start from the user's open tasks. Place each one in a time slot that fits its priority and the user's energy curve.",
+      "- If the user's tasks are few (or zero), FILL the rest of the day with sensible baseline blocks so the day is complete:",
+      "  • Focus Block — deep work / personal project time",
+      "  • Breakfast (~08:00), Lunch (~12:30), Dinner (~18:30)",
+      "  • Essential Breaks — stretch, walk, hydrate, fresh air",
+      "  • Wind-down — light reading, tidy up, reflection (late evening)",
+      "- For injected blocks, invent a stable synthetic id like 'auto-breakfast', 'auto-focus-1', 'auto-break-2', 'auto-winddown'. Never reuse a real task id.",
+      "- Real user tasks MUST keep their exact original id.",
+      "",
+      "STRICT ADAPTABILITY:",
+      "- High energy (3–4): longer Focus Blocks (45–75 min), place demanding / high-priority work in the morning while the mind is fresh.",
+      "- Medium energy (2): balanced 30–45 min focus, regular 10–15 min breaks.",
+      "- Low energy (1) or mood 'tired' / 'overwhelmed': shorter focus (20–25 min), MORE FREQUENT and LONGER breaks (15–20 min), surface restorative / lighter tasks first, push demanding work later or drop it.",
+      "",
+      "CLEAN TIME INGESTION:",
+      "- timeSlot must be 24h 'HH:MM'.",
+      "- Blocks must be in strict chronological order across the whole day.",
+      "- Space them realistically (e.g. 08:00, 09:30, 11:30, 12:30, 14:00, 16:00, 18:30, 20:00) — no overlaps, no backwards jumps.",
+      "- duration is in minutes and must match the gap to the next block.",
+      "",
+      "alignmentReason: one short sentence (<=12 words) explaining why this block fits the user's current mood + energy.",
+    ].join("\n");
 
-    const system =
-      "You are an adaptive daily planner. Order tasks for the user's current mood and energy. " +
-      "High energy → harder/high-priority tasks earlier. Low energy or 'overwhelmed'/'tired' → " +
-      "easier tasks first, fewer tasks, shorter durations. Use 24h HH:MM time slots starting 09:00. " +
-      "Keep reasons under 12 words.";
+    const taskList = data.tasks.length
+      ? data.tasks.map((t) => `- [${t.priority}] (${t.id}) ${t.title}`).join("\n")
+      : "(none — generate a full baseline day)";
 
     const user = `Mood: ${data.mood}. Energy: ${data.energy}/4.
-Tasks:
-${data.tasks.map((t) => `- [${t.priority}] (${t.id}) ${t.title}`).join("\n")}`;
+Open tasks:
+${taskList}
+
+Return a complete day from ~08:00 to ~21:00. Place the user's tasks first, then fill the remaining time with baseline blocks (meals, breaks, focus, wind-down) so the schedule is never empty or sparse.`;
 
     try {
       const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
